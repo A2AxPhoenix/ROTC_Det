@@ -10,7 +10,7 @@
 
 class Detachment {
 	private:
-		uint32_t unitNumber;
+        std::string unitNumber;
 		std::string name;
 		std::string city;
 		std::string state;
@@ -23,10 +23,10 @@ class Detachment {
 	public:
 		// Constructors
 		Detachment();
-		Detachment(uint32_t newUnitNumber, std::string newName, std::string newCity, std::string newState, std::string newRegion, std::string newSchool);
+		Detachment(std::string newUnitNumber, std::string newName, std::string newCity, std::string newState, std::string newRegion, std::string newSchool);
 
 		// Accessors
-		uint32_t get_unitNumber() const;
+        std::string get_unitNumber() const;
 		std::string get_name() const;
 		std::string get_city() const;
 		std::string get_state() const;
@@ -38,7 +38,7 @@ class Detachment {
 		std::vector<Person> get_chainOfCommand() const;	
 		
 		// Mutators
-		void set_unitNumber(uint32_t newUnitNumber);
+		void set_unitNumber(std::string newUnitNumber);
 		void set_name(std::string newName);
 		void set_city(std::string newCity);
 		void set_state(std::string newState);
