@@ -47,7 +47,7 @@ class Detachment {
 		void set_staff(std::vector<Cadre> newStaff);
 		void set_flight(std::vector<Flight> newFlight);
 		void set_cadets(std::vector<Cadet> newCadets);
-		void set_chainofCommand(std::vector<Person> newChainOfCommand);
+		void set_chainOfCommand(std::vector<Person> newChainOfCommand);
 
 		// Comparison
 		bool operator<(const Detachment &d);
