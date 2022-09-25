@@ -1,5 +1,8 @@
 #include "Detachment.h"
+#include <fstream>
+#include <set>
 #include <stdexcept>
+#include <sstream>
 using D = Detachment;
 
 
@@ -7,7 +10,8 @@ using D = Detachment;
 // To call the default constructor, declare a variable of Detachment type
 // Example:
 //      Detachment d; // Sets a variable named d of type Detachment
-D::Detachment() {
+D::Detachment() 
+{
     unitNumber = "000";
     name = "Insert Name Here";
     city = "Insert City Here";
@@ -22,7 +26,8 @@ D::Detachment() {
 //      Detachment d("123", "Spartans", "San Jose"); // Sets a variable of type D to have a unit number of 123, the name Spartans, and city San Jose
 //  NOTE: The example only initializes unitNumber, name, and city. The remaining variables will default.
 //  Use mutators to change any value
-D::Detachment(std::string newUnitNumber, std::string newName, std::string newCity, std::string newState, std::string newRegion, std::string newSchool) {
+D::Detachment(std::string newUnitNumber, std::string newName, std::string newCity, std::string newState, std::string newRegion, std::string newSchool) 
+{
     set_unitNumber(newUnitNumber);	
     set_name(newName);
     set_city(newCity);
@@ -131,14 +136,18 @@ std::vector<Person> D::get_chainOfCommand() const { return chainOfCommand; }
 //          DET-0034 is invalid
 //          DET-ABC is invalid
 //          DET-!@# is invalid
-void D::set_unitNumber(std::string newUnitNumber) {
+void D::set_unitNumber(std::string newUnitNumber) 
+{
     const uint8_t UNIT_NUM_SIZE = 3;
-    for (char c : newUnitNumber) {
-        if (!isdigit(c)) {
+    for (char c : newUnitNumber) 
+	{
+        if (!isdigit(c)) 
+		{
             throw std::runtime_error("Detachments can only have numerical values.\n");
         }
     }
-    if (newUnitNumber.size() != UNIT_NUM_SIZE) {
+    if (newUnitNumber.size() != UNIT_NUM_SIZE) 
+	{
         throw std::runtime_error("Unit Numbers for Detachments can only be values from 000 to 999.\n");
     }
     unitNumber = newUnitNumber;
@@ -153,54 +162,143 @@ void D::set_unitNumber(std::string newUnitNumber) {
 //          !Flying Bulldogs is invalid
 //          Flying-Bulldogs is valid
 //          Fl1y1ng Bulldog5 is invalid
-void D::set_name(std::string newName) {
+void D::set_name(std::string newName) 
+{
     const uint8_t MAX_SIZE = 100;
-    if (newName.size() > MAX_SIZE) {
+    if (newName.size() > MAX_SIZE) 
+	{
         throw std::runtime_error("Unit Names can only be up to 100 characters long.\n");
     }
-    for (const char &c: newName) {
-        if (ispunct(c) and c != '-') {
+    for (const char &c: newName) 
+	{
+        if (ispunct(c) and c != '-') 
+		{
             throw std::runtime_error("The only punctuation allowed is a hypen ('-')\n");
         }
-        if (isdigit(c)) {
+        if (isdigit(c)) 
+		{
             throw std::runtime_error("Names can only be alphabetical characters.\n");
         }
     }
     name = newName;
 }
-void set_city(std::string newCity);
-void set_state(std::string newState);
-void set_region(std::string newRegion);
-void set_school(std::string newSchool);
-void set_staff(std::vector<Cadre> newStaff);
-void set_flight(std::vector<Flight> newFlight);
-void set_cadets(std::vector<Cadet> newCadets);
-void set_chainOfCommand(std::vector<Person> newChainOfCommand);
+void D::set_city(std::string newCity) 
+{
+	std::fstream file("cities.txt");
+	if (!file) 
+	{
+		throw std::runtime_error("This file does not exist.\n");
+	}
+	std::set<std::string> cities;
+	while (file) 
+	{
+		std::string line;
+		getline(file, line);
+		std::stringstream read(line);
+		std::string cityData;
+	getline(read, cityData, '\n');
+		if (!file) 
+		{
+			break;
+		}
+		cities.insert(cityData);
+	}
+	auto search = cities.find(newCity);
+	if (search == cities.end()) 
+	{
+		throw std::runtime_error("This city does not exist in the United States or its territories.\n");
+	}
+	city = newCity;
+}
+void D::set_state(std::string newState) 
+{
+	std::fstream file("states.txt");
+	if (!file) 
+	{
+		throw std::runtime_error("This file does not exist.\n");
+	}
+	std::set<std::string> states;
+	while (file) 
+	{
+		std::string line;
+		getline(file, line);
+		std::stringstream read(line);
+		std::string stateData;
+		getline(read, stateData, '\n');
+		if (!file) 
+		{
+			break;
+		}
+		states.insert(stateData);
+	}
+	auto search = states.find(newState);
+	if (search == states.end()) 
+	{
+		throw std::runtime_error("This state does not exist in the United States or its territories.\n");
+	}
+	state = newState;
+}
+void D::set_region(std::string newRegion) 
+{
+	region = newRegion;	
+}
+void D::set_school(std::string newSchool) 
+{
+}
+void D::set_staff(std::vector<Cadre> newStaff) 
+{
+}
+void D::set_flight(std::vector<Flight> newFlight) 
+{
+}
+void D::set_cadets(std::vector<Cadet> newCadets) 
+{
+}
+void D::set_chainOfCommand(std::vector<Person> newChainOfCommand) 
+{
+}
 
 // Comparison
-bool D::operator<(const Detachment &d) {
+bool D::operator<(const Detachment &d) 
+{
     return unitNumber < d.get_unitNumber();
 }
-bool D::operator==(const Detachment &d) {
+bool D::operator==(const Detachment &d) 
+{
     return unitNumber == d.get_unitNumber(); 
 }
 
-std::ostream& operator<<(std::ostream& outs, const Detachment &d) {
+std::ostream& operator<<(std::ostream& outs, const Detachment &d) 
+{
     // TODO: Continue with this
     return outs;
 }
-std::istream& operator>>(std::istream& ins, Detachment &d) {
+std::istream& operator>>(std::istream& ins, Detachment &d) 
+{
     ins >> d.unitNumber >> d.name >> d.city >> d.state >> d.region >> d.school;
     return ins;
 }
 
-bool sort_on_unitNumber(const Detachment &d1, const Detachment &d2);
-bool sort_on_region(const Detachment &d1, const Detachment &d2);
-void print_Det_Info(const Detachment &d);
-void print_cadre(const Detachment &d);
-void print_CoC(const Detachment &d);
-void print_flight(const Detachment &d);
-void print_roster(const Detachment &d);
-
-
-
+bool sort_on_unitNumber(const Detachment &d1, const Detachment &d2) 
+{ 
+	return false;
+}
+bool sort_on_region(const Detachment &d1, const Detachment &d2) 
+{
+	return false;
+}
+void print_Det_Info(const Detachment &d) 
+{
+}
+void print_cadre(const Detachment &d) 
+{
+}
+void print_CoC(const Detachment &d) 
+{
+}
+void print_flight(const Detachment &d) 
+{
+}
+void print_roster(const Detachment &d) 
+{
+}
