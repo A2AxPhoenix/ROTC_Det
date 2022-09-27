@@ -4,7 +4,7 @@
 #include <stdexcept>
 #include <sstream>
 using D = Detachment;
-
+//TODO: Finish Documenting the code -- next file Cadre.h
 
 // Default constructor
 // To call the default constructor, declare a variable of Detachment type
@@ -240,22 +240,39 @@ void D::set_state(std::string newState)
 }
 void D::set_region(std::string newRegion) 
 {
+    const std::string SW = "Southwest";
+    const std::string NW = "Northwest";
+    const std::string SE = "Southeast";
+    const std::string NE = "Northeast";
+    if (newRegion != SW or newRegion != NW or newRegion != SE or newRegion != NE) 
+    {
+        throw std::runtime_error("The only valid options for regions are:\n1. Southwest\n2.Southeast\n3.Northwest\n4.Northeast\n");
+    }
 	region = newRegion;	
 }
 void D::set_school(std::string newSchool) 
 {
+    if (newSchool.size() >= std::numeric_limits<uint8_t>::max()) 
+    {
+        throw std::runtime_error("Maximum character size cannot exceed 255 characters.\n");
+    }
+    school = newSchool;
 }
 void D::set_staff(std::vector<Cadre> newStaff) 
 {
+    staff = newStaff;
 }
 void D::set_flight(std::vector<Flight> newFlight) 
 {
+    flights = newFlight;
 }
 void D::set_cadets(std::vector<Cadet> newCadets) 
 {
+    cadets = newCadets;
 }
 void D::set_chainOfCommand(std::vector<Person> newChainOfCommand) 
 {
+    chainOfCommand = newChainOfCommand;
 }
 
 // Comparison
@@ -270,7 +287,10 @@ bool D::operator==(const Detachment &d)
 
 std::ostream& operator<<(std::ostream& outs, const Detachment &d) 
 {
-    // TODO: Continue with this
+    outs << "Det-" << d.get_unitNumber() << " - ";
+    outs << d.get_name() << std::endl;
+    outs << d.get_school() << ", " << d.get_region() << std::endl;
+    outs << d.get_city() << ", " << d.get_state() << std::endl;
     return outs;
 }
 std::istream& operator>>(std::istream& ins, Detachment &d) 
@@ -281,24 +301,56 @@ std::istream& operator>>(std::istream& ins, Detachment &d)
 
 bool sort_on_unitNumber(const Detachment &d1, const Detachment &d2) 
 { 
-	return false;
+	return d1.get_unitNumber() < d2.get_unitNumber();
 }
 bool sort_on_region(const Detachment &d1, const Detachment &d2) 
 {
-	return false;
+    if (d1.get_region() == d2.get_region()) 
+    {
+        return d1.get_unitNumber() < d2.get_unitNumber();
+    }
+	return d1.get_region() < d2.get_region();
 }
 void print_Det_Info(const Detachment &d) 
 {
+    std::cout << "Det-" << d.get_unitNumber() << " - ";
+    std::cout << d.get_name() << std::endl;
+    std::cout << d.get_school() << ", " << d.get_region() << std::endl;
+    std::cout << d.get_city() << ", " << d.get_state() << std::endl;
 }
 void print_cadre(const Detachment &d) 
 {
+    std::cout << "============   CADRE   ============\n";
+    for (const Cadre &c : d.get_staff())
+    {
+        std::cout << c.get_name() << std::endl;
+    }
 }
 void print_CoC(const Detachment &d) 
 {
+    std::cout << "============   CHAIN OF COMMAND   ============\n";
+    for (const Person &p : d.get_chainOfCommand())
+    {
+        std::cout << p.get_name() << ": " << p.get_rank() << std::endl;
+    }
 }
 void print_flight(const Detachment &d) 
 {
+    std::cout << "============   FLIGHTS   ============\n";
+    for (const Flight &f : d.get_flight()) 
+    {
+        std::cout << "======   " << f.get_name() << " FLIGHT   ======\n";
+        for (const Cadet &c : f.get_cadets()) 
+        {
+            std::cout << c.get_name() << ": " << c.get_class() << std::endl;
+        }
+    }
 }
 void print_roster(const Detachment &d) 
 {
+    std::cout << "============   ROSTER   ============\n";
+    for (const Cadet &c : d.get_cadets())
+    {
+        std::cout << c.get_rank() << " " << c.get_name() << ": " << c.get_class() << std::endl;
+    }
 }
