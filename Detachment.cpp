@@ -182,6 +182,15 @@ void D::set_name(std::string newName)
     }
     name = newName;
 }
+// A detachment's city can only be a city in the United States.
+// The file cities.txt keeps an updated list of every city in the United States and its territories.
+//  Example:
+//          Detachment d;
+//          d.set_city("New York");
+//  Handled Cases:
+//          New York City is invalid (New York City City would be redundant)
+//          London is invalid is not in the United States
+//          Portland is valid since it is in the United States
 void D::set_city(std::string newCity) 
 {
 	std::fstream file("cities.txt");
@@ -210,6 +219,16 @@ void D::set_city(std::string newCity)
 	}
 	city = newCity;
 }
+// A detachment's state can only be one of the valid 50 states plus DC.
+// The file states.txt keeps an updated list of every state in the United States and its territories.
+//  Example:
+//          Detachment d;
+//          d.set_state("Oregon");
+//  Handled Cases:
+//          California is valid
+//          District of Columbia is valid
+//          DC is invalid (No abbreviations)
+//          Puerto Rico is invalid (Territories are not valid)
 void D::set_state(std::string newState) 
 {
 	std::fstream file("states.txt");
@@ -238,6 +257,16 @@ void D::set_state(std::string newState)
 	}
 	state = newState;
 }
+// A detachment's region can only be one of the four valid regions
+// The Regions are: Southwest, Northwest, Northeast, Southeast
+//  Example:
+//          Detachment d;
+//          d.set_region("Southwest");
+//  Handled Cases:
+//          Southwest is valid
+//          South-West is invalid (No hypenated regions)
+//          SW is invalid (No abbreviations)
+//          Midwest is invalid (Invalid Region)
 void D::set_region(std::string newRegion) 
 {
     const std::string SW = "Southwest";
@@ -250,6 +279,16 @@ void D::set_region(std::string newRegion)
     }
 	region = newRegion;	
 }
+// A detachment's school can only be a string of characters of max size 255.
+// Schools currently are allowed to be abbreviated or non-accredited.
+//  Example:
+//          Detachment d;
+//          d.set_school("Fresno State");
+//  Handled Cases:
+//          Fresno State is valid
+//          California State University, Fresno is valid
+//          University of California, Los Angeles is valid
+//          Any string greater than or eaual to 255 characters is invalid
 void D::set_school(std::string newSchool) 
 {
     if (newSchool.size() >= std::numeric_limits<uint8_t>::max()) 
@@ -258,28 +297,63 @@ void D::set_school(std::string newSchool)
     }
     school = newSchool;
 }
+// A detachment's staff can be a vector of any number of Cadre.
+// To utilize this, you will need to have Cadre.h and Cadre.cpp in your directory
+//  Example:
+//          Detachment d;
+//          d.set_staff(det_035); // Assume det_035 is an initialized vector with 4 names
+//  Handled Cases are handled within Cadre.cpp and Cadre.h        
 void D::set_staff(std::vector<Cadre> newStaff) 
 {
     staff = newStaff;
 }
+// A detachment's flight can be a vector of any number of flights.
+// To utilize this, you will need to have Flight.h and Flight.cpp in your directory
+//  Example:
+//          Detachment d;
+//          d.set_flight(detFlights); // Assume detFlights is an initialized vector with 4 flights
+//  Handled Cases are handled within Flight.cpp and Flight.h        
 void D::set_flight(std::vector<Flight> newFlight) 
 {
     flights = newFlight;
 }
+// A detachment's cadets can be a vector of any number of Cadets.
+// To utilize this, you will need to have Cadet.h and Cadet.cpp in your directory
+//  Example:
+//          Detachment d;
+//          d.set_cadets(detRoster); // Assume detRoster is an initialized vector with 30 names
+//  Handled Cases are handled within Cadet.cpp and Cadet.h        
 void D::set_cadets(std::vector<Cadet> newCadets) 
 {
     cadets = newCadets;
 }
+// A detachment's chain of command can be a vector of specified number of Persons.
+// To utilize this, you will need to have Person.h and Person.cpp in your directory
+// Person.h and Person.cpp will handle the comparisons of the chain of command
+//  Example:
+//          Detachment d;
+//          d.set_chain(det_chain); // Assume det_chain is an initialized vector with 4 names
+//  Handled Cases are handled within Person.cpp and Person.h        
 void D::set_chainOfCommand(std::vector<Person> newChainOfCommand) 
 {
     chainOfCommand = newChainOfCommand;
 }
-
-// Comparison
+// When comparing two detachments, it utilizes the unit number as the key
+// Example: 
+//          Detachment d1("000");
+//          Detachment d2("001);
+//          if (d1 < d2) std::cout << "d1 is less than d2\n";
+//          else std::cout << "d2 is less than d1\n";
 bool D::operator<(const Detachment &d) 
 {
     return unitNumber < d.get_unitNumber();
 }
+// When comparing if two detachments are equal to each other, it will use the unit number as the key
+//  Example:
+//          Detachment d1("000");
+//          Detachment d2("000");
+//          if (d1 == d2) std::cout << "These detachments are similar.\n";
+//          else std::cout << "These detachments are different.\n";
 bool D::operator==(const Detachment &d) 
 {
     return unitNumber == d.get_unitNumber(); 
@@ -293,16 +367,40 @@ std::ostream& operator<<(std::ostream& outs, const Detachment &d)
     outs << d.get_city() << ", " << d.get_state() << std::endl;
     return outs;
 }
+
 std::istream& operator>>(std::istream& ins, Detachment &d) 
 {
     ins >> d.unitNumber >> d.name >> d.city >> d.state >> d.region >> d.school;
     return ins;
 }
-
+// Sorts based on unit number.
+//  Example:
+//          vector<Detachment> detachments;
+//          Detachment d1("000");
+//          Detachment d2("035");
+//          detachments.push_back(d1);
+//          detachments.push_back(d2);
+//          sort(detachments.begin(), detachments.end(), sort_on_unitNumber);
 bool sort_on_unitNumber(const Detachment &d1, const Detachment &d2) 
 { 
 	return d1.get_unitNumber() < d2.get_unitNumber();
 }
+// Sorts based on region. If the regions are similar, sort on unit number
+// Example:
+//          Detachment d1("001");
+//          Detachment d2("002");
+//          Detachment d3("035");
+//          Detachment d4("090");
+//          vector<Detachment> detachments;
+//          detachments.push_back(d1);
+//          detachments.push_back(d2);
+//          detachments.push_back(d3);
+//          detachments.push_back(d4);
+//          d1.set_region("Southwest");
+//          d2.set_region("Northwest");
+//          d3.set_region("Southwest");
+//          d4.set_region("Northwest");
+//          sort(detachments.begin(), detachments.end(), sort_on_region);
 bool sort_on_region(const Detachment &d1, const Detachment &d2) 
 {
     if (d1.get_region() == d2.get_region()) 
@@ -311,6 +409,7 @@ bool sort_on_region(const Detachment &d1, const Detachment &d2)
     }
 	return d1.get_region() < d2.get_region();
 }
+
 void print_Det_Info(const Detachment &d) 
 {
     std::cout << "Det-" << d.get_unitNumber() << " - ";
@@ -318,39 +417,46 @@ void print_Det_Info(const Detachment &d)
     std::cout << d.get_school() << ", " << d.get_region() << std::endl;
     std::cout << d.get_city() << ", " << d.get_state() << std::endl;
 }
+// TODO: Get this functions working by completing the correct files.
 void print_cadre(const Detachment &d) 
 {
     std::cout << "============   CADRE   ============\n";
     for (const Cadre &c : d.get_staff())
     {
-        std::cout << c.get_name() << std::endl;
+//        std::cout << c.get_name() << std::endl;
     }
 }
+
+// TODO: Get this functions working by completing the correct files.
 void print_CoC(const Detachment &d) 
 {
     std::cout << "============   CHAIN OF COMMAND   ============\n";
     for (const Person &p : d.get_chainOfCommand())
     {
-        std::cout << p.get_name() << ": " << p.get_rank() << std::endl;
+  //      std::cout << p.get_name() << ": " << p.get_rank() << std::endl;
     }
 }
+
+// TODO: Get this functions working by completing the correct files.
 void print_flight(const Detachment &d) 
 {
     std::cout << "============   FLIGHTS   ============\n";
     for (const Flight &f : d.get_flight()) 
     {
-        std::cout << "======   " << f.get_name() << " FLIGHT   ======\n";
-        for (const Cadet &c : f.get_cadets()) 
+    //    std::cout << "======   " << f.get_name() << " FLIGHT   ======\n";
+      //  for (const Cadet &c : f.get_cadets()) 
         {
-            std::cout << c.get_name() << ": " << c.get_class() << std::endl;
+        //    std::cout << c.get_name() << ": " << c.get_class() << std::endl;
         }
     }
 }
+
+// TODO: Get this functions working by completing the correct files.
 void print_roster(const Detachment &d) 
 {
     std::cout << "============   ROSTER   ============\n";
     for (const Cadet &c : d.get_cadets())
     {
-        std::cout << c.get_rank() << " " << c.get_name() << ": " << c.get_class() << std::endl;
+        //std::cout << c.get_rank() << " " << c.get_name() << ": " << c.get_class() << std::endl;
     }
 }
